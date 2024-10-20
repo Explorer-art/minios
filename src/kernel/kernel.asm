@@ -1,7 +1,9 @@
 main:
-	mov bx, hello_message
+	call clear_screen
+	mov si, welcome_message
 	call puts
+	call in_char
+	
+	hlt
 
-	jmp $
-
-hello_message: db "Hello World!", 0
+welcome_message: db "Hello World!", 0

@@ -1,5 +1,5 @@
-org 0x7c00
 bits 16
+org 0x7c00
 
 boot:
 	cli ; Отключаем прерывания
@@ -25,10 +25,10 @@ boot:
 	jmp 0x7e00
 
 read_error:
-	mov bx, read_error_message
+	mov si, read_error_message
 	call puts
-
-	jmp $
+	
+	hlt
 
 read_error_message: db "Read error!", 0
 

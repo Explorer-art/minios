@@ -8,18 +8,16 @@ terminal_loop:
 
 	call gets
 
-	mov ax, 0
-	call get_arg
-
-	mov si, arg_buffer
-	call puts
-
-	;call command_handler
+	mov bx, buffer
+	call command_handler
 
 	jmp terminal_loop
 
 ;
 ; Обработчик команд
+;
+; Параметры:
+; - bx: адрес начала буфера
 ;
 
 command_handler:

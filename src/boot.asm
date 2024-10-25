@@ -25,7 +25,7 @@ start:
 	mov ch, 0 ; цилиндр
 	mov cl, 2 ; начальный сектор для чтения
 	mov dh, 0 ; головка
-	mov dl, 0x80 ; дис
+	mov dl, 0x80 ; диск
 	xor bx, bx
 	mov si, bx
 	mov bx, 0x7E00 ; адрес начала памяти куда будут загружены данные
@@ -55,3 +55,5 @@ dw 0xAA55
 %include "src/terminal.asm"
 
 %include "src/strings.asm"
+
+

@@ -1,21 +1,20 @@
-fat.c(1): Error! E1055: Unable to open 'stdio.h'
-fat.c(4): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(5): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(6): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(7): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(8): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(9): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(10): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(11): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(12): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(13): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(14): Error! E1022: Missing or misspelled data type near 'uint16_t'
-fat.c(15): Error! E1022: Missing or misspelled data type near 'uint32_t'
-fat.c(16): Error! E1022: Missing or misspelled data type near 'uint32_t'
-fat.c(20): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(21): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(22): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(23): Error! E1022: Missing or misspelled data type near 'uint32_t'
-fat.c(24): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(25): Error! E1022: Missing or misspelled data type near 'uint8_t'
-fat.c(26): Error! E1147: Too many errors: compilation aborted
+stdint.h(17): Warning! W138: No newline at end of file
+memdefs.h(19): Warning! W138: No newline at end of file
+fat.c(42): Warning! W114: Missing semicolon
+fat.c(53): Error! E1009: Expecting ';' but found 'if'
+fat.c(59): Error! E1031: Name 'SectorsPerFat' not found in struct/union 
+fat.c(59): Error! E1031: Name 'BytesPerSector' not found in struct/union 
+fat.c(66): Error! E1031: Name 'ReservedSectors' not found in struct/union 
+fat.c(66): Error! E1031: Name 'SectorsPerFat' not found in struct/union 
+fat.c(66): Warning! W102: Parameter 4: Type mismatch (warning)
+fat.c(66): Note! I2003: source conversion type is 'unsigned char __far *'
+fat.c(66): Note! I2004: target conversion type is 'unsigned long'
+fat.c(66): Note! I2002: 'DISK_ReadSectors' defined in: disk.h(13)
+fat.c(66): Error! E1151: Parameter count does not agree with previous definition
+fat.c(72): Error! E1031: Name 'ReservedSectors' not found in struct/union 
+fat.c(72): Error! E1031: Name 'SectorsPerFat' not found in struct/union 
+fat.c(72): Error! E1031: Name 'FatCount' not found in struct/union 
+fat.c(73): Error! E1031: Name 'DirEntriesCount' not found in struct/union 
+fat.c(74): Error! E1031: Name 'BytesPerSector' not found in struct/union 
+fat.c(77): Error! E1031: Name 'BytesPerSector' not found in struct/union 
+fat.c(85): Warning! W107: Missing return value for function 'FAT_Initialize'

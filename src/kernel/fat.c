@@ -113,12 +113,12 @@ bool FAT_Initialize(DISK* disk)
 
     // open root directory file
     uint32_t rootDirLba = g_Data->BS.BootSector.ReservedSectors + g_Data->BS.BootSector.SectorsPerFat * g_Data->BS.BootSector.FatCount;
-    uint32_t rootDirSize = sizeof(FAT_DirectoryEntry) * g_Data->BS.BootSector.DirEntryCount;
+    uint32_t rootDirSize = sizeof(FAT_Entry) * g_Data->BS.BootSector.DirEntryCount;
 
     g_Data->RootDirectory.Public.Handle = ROOT_DIRECTORY_HANDLE;
     g_Data->RootDirectory.Public.IsDirectory = true;
     g_Data->RootDirectory.Public.Position = 0;
-    g_Data->RootDirectory.Public.Size = sizeof(FAT_DirectoryEntry) * g_Data->BS.BootSector.DirEntryCount;
+    g_Data->RootDirectory.Public.Size = sizeof(FAT_Entry) * g_Data->BS.BootSector.DirEntryCount;
     g_Data->RootDirectory.Opened = true;
     g_Data->RootDirectory.FirstCluster = rootDirLba;
     g_Data->RootDirectory.CurrentCluster = rootDirLba;
@@ -146,7 +146,7 @@ uint32_t FAT_ClusterToLba(uint32_t cluster)
     return g_DataSectionLba + (cluster - 2) * g_Data->BS.BootSector.SectorsPerCluster;
 }
 
-FAT_File far* FAT_OpenEntry(DISK* disk, FAT_DirectoryEntry* entry)
+FAT_File far* FAT_OpenEntry(DISK* disk, FAT_Entry* entry)
 {
     // find empty handle
     int handle = -1;
@@ -261,9 +261,9 @@ uint32_t FAT_Read(DISK* disk, FAT_File far* file, uint32_t byteCount, void* data
     return u8DataOut - (uint8_t*)dataOut;
 }
 
-bool FAT_ReadEntry(DISK* disk, FAT_File far* file, FAT_DirectoryEntry* dirEntry)
+bool FAT_ReadEntry(DISK* disk, FAT_File far* file, FAT_Entry* dirEntry)
 {
-    return FAT_Read(disk, file, sizeof(FAT_DirectoryEntry), dirEntry) == sizeof(FAT_DirectoryEntry);
+    return FAT_Read(disk, file, sizeof(FAT_Entry), dirEntry) == sizeof(FAT_Entry);
 }
 
 void FAT_Close(FAT_File far* file)
@@ -279,10 +279,10 @@ void FAT_Close(FAT_File far* file)
     }
 }
 
-bool FAT_FindFile(DISK* disk, FAT_File far* file, const char* name, FAT_DirectoryEntry* entryOut)
+bool FAT_FindFile(DISK* disk, FAT_File far* file, const char* name, FAT_Entry* entryOut)
 {
     char fatName[12];
-    FAT_DirectoryEntry entry;
+    FAT_Entry entry;
 
     // convert from name to fat name
     memset(fatName, ' ', sizeof(fatName));
@@ -343,7 +343,7 @@ FAT_File far* FAT_Open(DISK* disk, const char* path)
         }
         
         // find directory entry in current directory
-        FAT_DirectoryEntry entry;
+        FAT_Entry entry;
         if (FAT_FindFile(disk, current, name, &entry))
         {
             FAT_Close(current);

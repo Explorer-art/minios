@@ -65,3 +65,29 @@ unsigned strlen(const char* str) {
 
   return length;
 }
+
+char* strcat(char* dst, const char* src) {
+	char* orig_dst = dst;
+
+	if (dst == NULL) {
+		return NULL;
+	}
+
+	if (src == NULL) {
+		return NULL;
+	}
+
+	while (*dst) {
+		dst++;
+	}
+
+	while (*src) {
+		*dst = *src;
+		dst++;
+		src++;
+	}
+
+	*dst = '\0';
+
+	return orig_dst;
+}

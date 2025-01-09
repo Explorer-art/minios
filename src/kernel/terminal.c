@@ -32,10 +32,12 @@ bool ls() {
 	return true;
 }
 
-bool cd(char* command) {
-	if (strcmp(string_split(command, ' ', 1), command) == 0) {
+bool cd(char** args) {
+	int args_count = get_args_count(args);
+
+	if (args_count < 2) {
 		printf("Incorrect command format!\n");
-		printf("Example: cd <dir>\n");
+		printf("Example: cd <dir>\n\n");
 		return false;
 	}
 
@@ -44,8 +46,8 @@ bool cd(char* command) {
 	int i = 3;
 	int j = 0;
 
-	while (command[i] != '\0') {
-		dir[j] = command[i];
+	while (args[1][i] != '\0') {
+		dir[j] = args[1][i];
 		i++;
 		j++;
 	}
@@ -62,23 +64,24 @@ bool cd(char* command) {
 }
 
 bool info() {
-	printf("INFO:\n\nSystem: Minios\nVersion: %s\nAuthor: Truzme_\n", VERSION);
+	printf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
 	return true;
 }
 
-bool echo(char* command) {
-	if (strcmp(string_split(command, ' ', 1), command) == 0) {
+bool echo(char** args) {
+	int args_count = get_args_count(args);
+
+	if (args_count < 2) {
 		printf("Incorrect command format!\n");
-		printf("Example: echo <text>\n");
+		printf("Example: echo <text>\n\n");
 		return false;
 	}
 
-	for (int i = 5; i < strlen(command); i++) {
-		putchar(command[i]);
+	for (int i = 1; i < args_count; i++) {
+		printf("%s ", args[i]);
 	}
 
-	putchar('\n');
-	putchar('\r');
+	printf("\n\n");
 
 	return true;
 }
@@ -90,53 +93,49 @@ bool clear() {
 
 bool help();
 
-static const Command_Map commands[] = {
-	{"help", help},
-	{"ls", ls},
-	{"cd", cd},
-	{"info", info},
-	{"echo", echo},
-	{"clear", clear}
+static const CommandData commands_map[] = {
+	{"help", "Help on commands", help},
+	{"ls", "Read directory", ls},
+	{"cd", "Change directory", cd},
+	{"info", "Information about the system", info},
+	{"echo", "Print test to the terminal", echo},
+	{"clear", "Clear terminal", clear}
 };
 
 bool help() {
-	printf("Help on commands:\n\n");
-	
-	for (int i = 0; i < sizeof(commands) / sizeof(Command_Map); i++) {
-		printf("%s\n", commands[i]);
+	for (int i = 0; i < sizeof(commands_map) / sizeof(CommandData); i++) {
+		printf("%s - %s\n", commands_map[i].command, commands_map[i].description);
 	}
+
+	printf("\n");
 	
 	return true;
+}
+
+bool command_handle(char* command) {
+	char** args = string_split(command, ' ');
+
+	for (int i = 0; i < sizeof(commands_map) / sizeof(CommandData); i++) {
+		if (strcmp(args[0], commands_map[i].command) == 0) {
+			return commands_map[i].func(args);
+		}
+	}
+
+	printf("Unknown command!\n\n");
+
+	return false;
 }
 
 void terminal_main(DISK disk) {
 	g_disk = disk;
 	char* command;
-	char far* arg_1;
 
 	printf("Welcome to Minio!\n\n");
 
 	while (true) {
-		printf("%s > ", g_current_dir);
+		printf("%s %s > ", PROMPT, g_current_dir);
 
 		command = tty_gets();
-
-		arg_1 = (char far*) string_split(command, ' ', 0);
-
-		if (strcmp(arg_1, "help") == 0) {
-			help();
-		} else if (strcmp(arg_1, "ls") == 0) {
-			ls();
-		} else if (strcmp(arg_1, "cd") == 0) {
-			cd(command);
-		} else if (strcmp(arg_1, "info") == 0) {
-			info();
-		} else if (strcmp(arg_1, "echo") == 0) {
-			echo(command);
-		} else if (strcmp(arg_1, "clear") == 0) {
-			clear();
-		} else {
-			printf("Unknown command\n");
-		}
+		command_handle(command);
 	}
 }

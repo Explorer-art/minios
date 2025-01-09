@@ -23,7 +23,7 @@ void print_memory_table() {
 	}
 }
 
-void* malloc(uint32_t size) {
+void* mem_alloc(uint32_t size) {
 	if (size > MEMORY_SIZE || count >= MEMORY_MAX_HANDLES) {
 		return NULL;
 	}
@@ -74,7 +74,7 @@ void* malloc(uint32_t size) {
 	return NULL;
 }
 
-void free(uint32_t* ptr) {
+void mem_free(uint32_t* ptr) {
 	uint8_t memory_index = -1;
 
 	for (int i = 0; i < count; i++) {

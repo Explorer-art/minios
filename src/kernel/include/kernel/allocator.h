@@ -7,5 +7,5 @@ typedef struct {
 	uint32_t Size;
 } MemoryData;
 
-void* malloc(uint32_t size);
-void free(uint32_t* ptr);
+void* mem_alloc(uint32_t size);
+void mem_free(uint32_t* ptr);

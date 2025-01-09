@@ -62,7 +62,7 @@ bool cd(char* command) {
 }
 
 bool info() {
-	printf("INFO:\n\nSystem: Minio\nVersion: %s\nAuthor: Truzme_\n", VERSION);
+	printf("INFO:\n\nSystem: Minios\nVersion: %s\nAuthor: Truzme_\n", VERSION);
 	return true;
 }
 

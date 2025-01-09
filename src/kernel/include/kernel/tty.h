@@ -9,7 +9,6 @@
 #define RIGHT 0x27
 #define DOWN 0x28
 
-void tty_initialize();
 void tty_clear();
 void tty_putchar(char c);
 void tty_buffer_clear();

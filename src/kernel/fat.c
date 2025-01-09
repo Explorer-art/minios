@@ -85,9 +85,9 @@ bool FAT_ReadFat(DISK* disk)
     return DISK_ReadSectors(disk, g_Data->BS.BootSector.ReservedSectors, g_Data->BS.BootSector.SectorsPerFat, g_Fat);
 }
 
-bool FAT_Initialize(DISK* disk)
+bool FAT_Init(DISK* disk)
 {
-    g_Data = (FAT_Data far*)MEMORY_FAT_ADDR;
+    g_Data = (FAT_Data far*) MEMORY_FAT_ADDR;
 
     // read boot sector
     if (!FAT_ReadBootSector(disk))

@@ -1,10 +1,11 @@
-#include <kernel/dynamic_memory.h>
+#include <kernel/allocator.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <memdefs.h>
 
+#define MEMORY_SIZE 16384
 #define MEMORY_MAX_HANDLES 100
 
+static uint8_t memory[MEMORY_SIZE] = {0};
 static MemoryData memory_table[MEMORY_MAX_HANDLES];
 static int count = 0;
 
@@ -22,27 +23,24 @@ void print_memory_table() {
 	}
 }
 
-void* mem_allocate(uint32_t size) {
-	printf("\r%d\n", count);
-
-	if (size > MEMORY_FREE_SIZE || count >= MEMORY_MAX_HANDLES) {
+void* malloc(uint32_t size) {
+	if (size > MEMORY_SIZE || count >= MEMORY_MAX_HANDLES) {
 		return NULL;
 	}
 
 	if (count == 0) {
-		memory_table[count].StartAddr = FREE_MIN;
+		memory_table[count].StartAddr = &memory;
 		memory_table[count].Size = size;
 		count++;
 
-		printf("%lx\n", memory_table[count - 1].StartAddr);
-
-		return 0x5555;
+		return memory_table[count - 1].StartAddr;
 	}
 
 	bool check;
 
-	for (uint32_t address = FREE_MIN; address < FREE_MAX; address++) {
+	for (int index = 0; index < MEMORY_SIZE; index++) {
 		check = true;
+		uint32_t address = &memory[index];
 
 		for (int i = 0; i < count; i++) {
 			if (!check_range(address, memory_table[i].StartAddr, memory_table[i].StartAddr + memory_table[i].Size - 1)) {
@@ -55,7 +53,7 @@ void* mem_allocate(uint32_t size) {
 
 		if (check) {
 			for (int i = 0; i < count; i++) {
-				if (!check_range(address + size, memory_table[i].StartAddr, memory_table[i].StartAddr + memory_table[i].Size - 1)) {
+				if (!check_range(address + size - 1, memory_table[i].StartAddr, memory_table[i].StartAddr + memory_table[i].Size - 1)) {
 					check = true;
 				} else {
 					check = false;
@@ -76,7 +74,7 @@ void* mem_allocate(uint32_t size) {
 	return NULL;
 }
 
-void mem_free(void* ptr) {
+void free(uint32_t* ptr) {
 	uint8_t memory_index = -1;
 
 	for (int i = 0; i < count; i++) {

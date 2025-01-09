@@ -5,7 +5,7 @@
 	Функция инициализации диска
 */
 
-bool DISK_Initialize(DISK* disk, uint8_t drive_number) {
+bool DISK_Init(DISK* disk, uint8_t drive_number) {
 	uint8_t drive_type;
 	uint16_t cylinders, sectors, heads;
 

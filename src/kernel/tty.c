@@ -53,8 +53,3 @@ char* tty_gets() {
 
 	return buffer;
 }
-
-void tty_initialize() {
-	tty_clear();
-	tty_buffer_clear();
-}

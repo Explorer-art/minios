@@ -13,6 +13,7 @@ static void far* g_data = (void far*) 0x00500200;
 static char g_current_dir[256] = "/";
 
 bool ls() {
+	memset(g_data, 512, 0);
 	DISK_ReadSectors(&g_disk, 19, 1, g_data);
 
 	FAT_File far* fd = FAT_Open(&g_disk, g_current_dir);
@@ -41,24 +42,46 @@ bool cd(char** args) {
 		return false;
 	}
 
-	char dir[256] = {0};
+	char buffer[256] = {0};
 
-	int i = 3;
-	int j = 0;
+	if (strcmp(args[1], "..") == 0) {
+		if (strcmp(g_current_dir, '/') == 0) {
+			return false;
+		}
 
-	while (args[1][i] != '\0') {
-		dir[j] = args[1][i];
-		i++;
-		j++;
+		char** dir_args = string_split(g_current_dir, '/');
+		int g_current_dir_lenght = strlen(g_current_dir);
+		int dir_args_count = get_args_count(dir_args);
+
+		buffer[0] = '/';
+
+		for (int i = 0; i < dir_args_count - 1; i++) {
+			strcat(buffer, dir_args[i]);
+		}
+
+		memset(g_current_dir, g_current_dir_lenght, 0);
+		strcpy(g_current_dir, buffer);
+	} else {
+		int i = 0;
+		int j = 0;
+
+		if (strcmp(g_current_dir, "/") != 0) {
+			buffer[j] = '/';
+			j++;
+		}
+
+		while (args[1][i] != '\0') {
+			buffer[j] = args[1][i];
+			i++;
+			j++;
+		}
+			
+		if (strlen(g_current_dir) + strlen(buffer) > sizeof(g_current_dir) - 1) {
+			return false;
+		}
+
+		strcat(g_current_dir, buffer);
 	}
-
-	dir[j] = '/';
-		
-	if (strlen(g_current_dir) + strlen(dir) > sizeof(g_current_dir) - 1) {
-		return false;
-	}
-
-	strcat(g_current_dir, dir);
 
 	return true;
 }

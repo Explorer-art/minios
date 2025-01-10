@@ -22,8 +22,6 @@ void _cdecl kmain() {
 		goto end;
 	}
 
-	tty_clear();
-
 	// Передача управления терминалу
 	terminal_main(disk);
 end:

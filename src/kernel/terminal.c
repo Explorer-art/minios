@@ -13,7 +13,9 @@ static void far* g_data = (void far*) 0x00500200;
 static char g_current_dir[256] = "/";
 
 bool ls() {
-	memset(g_data, 512, 0);
+	printf("%s\n", g_current_dir);
+	
+	memset(g_data, 0, 512);
 	DISK_ReadSectors(&g_disk, 19, 1, g_data);
 
 	FAT_File far* fd = FAT_Open(&g_disk, g_current_dir);
@@ -86,6 +88,40 @@ bool cd(char** args) {
 	return true;
 }
 
+bool cat(char** args) {
+	char buffer[256] = {0};
+
+	memset(g_data, 0, 512);
+	DISK_ReadSectors(&g_disk, 19, 1, g_data);
+
+	if (args[1][0] == '/') {
+		strcpy(buffer, args[1]);
+	} else {
+		strcpy(buffer, g_current_dir);
+		strcat(buffer, "/");
+		strcat(buffer, args[1]);
+	}
+
+	FAT_File far* fd = FAT_Open(&g_disk, buffer);
+	uint32_t read_bytes;
+
+	memset(buffer, 0, sizeof(buffer));
+
+	while ((read_bytes = FAT_Read(&g_disk, fd, sizeof(buffer), buffer))) {
+		for (uint32_t i = 0; i < read_bytes; i++) {
+			if (buffer[i] == '\n') {
+				putchar('\r');
+			}
+
+			putchar(buffer[i]);
+		}
+	}
+
+	printf("\n\n");
+
+	FAT_Close(fd);
+}
+
 bool info() {
 	printf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
 	return true;
@@ -120,6 +156,7 @@ static const CommandData commands_map[] = {
 	{"help", "Help on commands", help},
 	{"ls", "Read directory", ls},
 	{"cd", "Change directory", cd},
+	{"cat", "Read file", cat},
 	{"info", "Information about the system", info},
 	{"echo", "Print test to the terminal", echo},
 	{"clear", "Clear terminal", clear}
@@ -152,6 +189,8 @@ bool command_handle(char* command) {
 void terminal_main(DISK disk) {
 	g_disk = disk;
 	char* command;
+
+	tty_clear();
 
 	printf("Welcome to Minio!\n\n");
 

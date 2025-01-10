@@ -8,5 +8,5 @@ make
 
 ### Запуск
 ```
-qemu-system-i386 -fda build/minio.img
+qemu-system-i386 -fda build/minios.img
 ```

@@ -1,4 +1,4 @@
 #pragma once
 
-#define VERSION "0.3"
+#define VERSION "0.4"
 #define PROMPT "root@minios"

@@ -192,7 +192,7 @@ void terminal_main(DISK disk) {
 
 	tty_clear();
 
-	printf("Welcome to Minio!\n\n");
+	printf("Welcome to Minios!\n\n");
 
 	while (true) {
 		printf("%s %s > ", PROMPT, g_current_dir);

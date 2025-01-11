@@ -13,8 +13,6 @@ static void far* g_data = (void far*) 0x00500200;
 static char g_current_dir[256] = "/";
 
 bool ls() {
-	printf("%s\n", g_current_dir);
-	
 	memset(g_data, 0, 512);
 	DISK_ReadSectors(&g_disk, 19, 1, g_data);
 
@@ -46,8 +44,12 @@ bool cd(char** args) {
 
 	char buffer[256] = {0};
 
+	if (strcmp(args[1], ".") == 0) {
+		return false;
+	}
+
 	if (strcmp(args[1], "..") == 0) {
-		if (strcmp(g_current_dir, '/') == 0) {
+		if (strcmp(g_current_dir, "/") == 0) {
 			return false;
 		}
 

@@ -13,8 +13,6 @@ entry:
 	mov bp, sp
 	sti
 
-	xor dh, dh
-	push dx
 	call _kmain
 
 	cli

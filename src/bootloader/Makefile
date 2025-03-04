@@ -6,7 +6,7 @@ BUILD_DIR?=build
 all: $(BUILD_DIR)/stage1.bin
 
 $(BUILD_DIR)/stage1.bin:
-	$(ASM) -f bin boot.asm -o $(BUILD_DIR)/stage1.bin
+	$(ASM) -f bin boot.asm -o $(BUILD_DIR)/boot.bin
 
 clean:
-	rm -f $(BUILD_DIR)/stage1.bin
+	rm -f $(BUILD_DIR)/boot.bin

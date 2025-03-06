@@ -1,6 +1,6 @@
 #include <kernel/tty.h>
 #include <kernel/allocator.h>
-#include <kernel/syscalls.h>
+#include <kernel/syscall.h>
 
 Syscalls syscalls = {
 	(putchar_syscall_ptr far*)0x0055250,

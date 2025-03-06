@@ -15,16 +15,16 @@ void puts(const char* str) {
 	(*puts_syscall)(str);
 }
 
-void printf(const char* fmt, ...) {
+void _cdecl printf(const char* fmt, ...) {
 	(*printf_syscall)(fmt, (int*)&fmt);
 }
 
 char getchar() {
-	return (*getchar_syscall)();
+	return (*getchar_syscall);
 }
 
 char* gets(char* str) {
-	str = (*gets_syscall)();
+	str = (*gets_syscall);
 
 	return str;
 }

@@ -8,5 +8,5 @@ void* malloc(uint32_t size) {
 }
 
 void free(uint32_t* ptr) {
-	free_syscall(ptr);
+	(*free_syscall)(ptr);
 }

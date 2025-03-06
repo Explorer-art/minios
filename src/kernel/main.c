@@ -2,7 +2,7 @@
 #include <kernel/disk.h>
 #include <kernel/fat.h>
 #include <kernel/tty.h>
-#include <kernel/syscalls.h>
+#include <kernel/syscall.h>
 #include <kernel/terminal.h>
 #include <utils.h>
 

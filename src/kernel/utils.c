@@ -1,9 +1,9 @@
 #include <utils.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <memory.h>
 #include <memdefs.h>
+#include <kernel/tty.h>
+#include <kernel/allocator.h>
 
 uint32_t align(uint32_t number, uint32_t alignTo) {
     if (alignTo == 0)
@@ -34,7 +34,7 @@ int count_words(const char* str, char delim) {
 char** string_split(char* str, char delim) {
 	int word_count = count_words(str, delim);
 
-	char** args = (char**) malloc((word_count + 1) * sizeof(char *));
+	char** args = (char**) mem_alloc((word_count + 1) * sizeof(char *));
 
 	if (args == NULL) {
 		return NULL;
@@ -50,14 +50,14 @@ char** string_split(char* str, char delim) {
 
 		if ((*str == delim || *(str + 1) == '\0') && word_start != NULL) {
 			int word_length = str - word_start + ((*str == delim) ? 0 : 1);
-			args[word_index] = (char*) malloc(word_length + 1);
+			args[word_index] = (char*) mem_alloc(word_length + 1);
 
 			if (args[word_index] == NULL) {
 				for (int i = 0; i < word_index; i++) {
-					free((uint32_t*) args[i]);
+					mem_free((uint32_t*) args[i]);
 				}
 
-				free((uint32_t*) args);
+				mem_free((uint32_t*) args);
 				return NULL;
 			}
 
@@ -79,11 +79,11 @@ void free_split(char** args) {
 	int i = 0;
 
 	while (args[i] != NULL) {
-		free((uint32_t*) args[i]);
+		mem_free((uint32_t*) args[i]);
 		i++;
 	}
 
-	free((uint32_t*) args);
+	mem_free((uint32_t*) args);
 }
 
 int get_args_count(char** args) {

@@ -1,29 +1,36 @@
-#include <stdio.h>
 #include <stdint.h>
 #include <kernel/disk.h>
 #include <kernel/fat.h>
 #include <kernel/tty.h>
+#include <kernel/syscalls.h>
 #include <kernel/terminal.h>
 #include <utils.h>
 
-void far* g_data = (void far*) 0x00500200;
+puts_syscall_ptr far* puts_syscall = (puts_syscall_ptr far*)0x0055270;
 
 void _cdecl kmain() {
 	DISK disk;
 
 	if (!DISK_Init(&disk, 0)) {
-		printf("Disk init error\n");
+		tty_printf("Disk init error\n");
 		goto end;
 		
 	}
 
 	if (!FAT_Init(&disk)) {
-		printf("FAT init error\n");
+		tty_printf("FAT init error\n");
 		goto end;
 	}
 
+	if (!Syscall_Init()) {
+		tty_printf("Syscall init error\n");
+		goto end;
+	}
+
+	(*puts_syscall)("Hello world!\n");
+
 	// Передача управления терминалу
-	terminal_main(disk);
+	// terminal_main(disk);
 end:
 	for(;;);
 }

@@ -3,6 +3,7 @@ bits 16
 section _TEXT class=CODE
 
 global __U4D
+global __U4M
 global _div64_32
 global _clear_screen
 global _write_char
@@ -51,7 +52,6 @@ __U4D:
 ; Volatile:       CX, BX destroyed
 ;
 
-global __U4M
 __U4M:
     shl edx, 16         ; dx to upper half of edx
     mov dx, ax          ; m1 in edx

@@ -3,9 +3,9 @@
 #include <kernel/fat.h>
 #include <kernel/disk.h>
 #include <kernel/config.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <memory.h>
 #include <utils.h>
 
 static DISK g_disk;
@@ -22,10 +22,10 @@ bool ls() {
 
 	while (FAT_ReadEntry(&g_disk, fd, &entry) && i++ < 5) {
 		for (int i = 0; i < 11; i++) {
-			putchar(entry.Name[i]);
+			tty_putchar(entry.Name[i]);
 		}
 
-		printf("\n");
+		tty_printf("\n");
 	}
 
 	FAT_Close(fd);
@@ -37,8 +37,8 @@ bool cd(char** args) {
 	int args_count = get_args_count(args);
 
 	if (args_count < 2) {
-		printf("Incorrect command format!\n");
-		printf("Example: cd <dir>\n\n");
+		tty_printf("Incorrect command format!\n");
+		tty_printf("Example: cd <dir>\n\n");
 		return false;
 	}
 
@@ -112,20 +112,20 @@ bool cat(char** args) {
 	while ((read_bytes = FAT_Read(&g_disk, fd, sizeof(buffer), buffer))) {
 		for (uint32_t i = 0; i < read_bytes; i++) {
 			if (buffer[i] == '\n') {
-				putchar('\r');
+				tty_putchar('\r');
 			}
 
-			putchar(buffer[i]);
+			tty_putchar(buffer[i]);
 		}
 	}
 
-	printf("\n\n");
+	tty_printf("\n\n");
 
 	FAT_Close(fd);
 }
 
 bool info() {
-	printf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
+	tty_printf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
 	return true;
 }
 
@@ -133,16 +133,16 @@ bool echo(char** args) {
 	int args_count = get_args_count(args);
 
 	if (args_count < 2) {
-		printf("Incorrect command format!\n");
-		printf("Example: echo <text>\n\n");
+		tty_printf("Incorrect command format!\n");
+		tty_printf("Example: echo <text>\n\n");
 		return false;
 	}
 
 	for (int i = 1; i < args_count; i++) {
-		printf("%s ", args[i]);
+		tty_printf("%s ", args[i]);
 	}
 
-	printf("\n\n");
+	tty_printf("\n\n");
 
 	return true;
 }
@@ -166,10 +166,10 @@ static const CommandData commands_map[] = {
 
 bool help() {
 	for (int i = 0; i < sizeof(commands_map) / sizeof(CommandData); i++) {
-		printf("%s - %s\n", commands_map[i].command, commands_map[i].description);
+		tty_printf("%s - %s\n", commands_map[i].command, commands_map[i].description);
 	}
 
-	printf("\n");
+	tty_printf("\n");
 	
 	return true;
 }
@@ -183,7 +183,7 @@ bool command_handle(char* command) {
 		}
 	}
 
-	printf("Unknown command!\n\n");
+	tty_printf("Unknown command!\n\n");
 
 	return false;
 }
@@ -194,10 +194,10 @@ void terminal_main(DISK disk) {
 
 	tty_clear();
 
-	printf("Welcome to Minios!\n\n");
+	tty_printf("Welcome to Minios!\n\n");
 
 	while (true) {
-		printf("%s %s > ", PROMPT, g_current_dir);
+		tty_printf("%s %s > ", PROMPT, g_current_dir);
 
 		command = tty_gets();
 		command_handle(command);

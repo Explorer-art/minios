@@ -1,6 +1,6 @@
 #include <kernel/allocator.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <kernel/tty.h>
 
 #define MEMORY_SIZE 16384
 #define MEMORY_MAX_HANDLES 100
@@ -19,7 +19,7 @@ bool check_range(uint32_t number, uint32_t range_start, uint32_t range_end) {
 
 void print_memory_table() {
 	for (int i = 0; i < count; i++) {
-		printf("Index: %d\n", i);
+		tty_printf("Index: %d\n", i);
 	}
 }
 

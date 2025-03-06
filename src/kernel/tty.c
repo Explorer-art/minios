@@ -119,8 +119,116 @@ int* printf_number(int* argp, int length, bool sign, int radix)
     return argp;
 }
 
-void tty_printf(const char* fmt, ...) {
+void _cdecl kernel_printf(const char* fmt, ...) {
 	int* argp = (int*)&fmt;
+	int state = PRINTF_STATE_NORMAL;
+	int length = PRINTF_LENGTH_DEFAULT;
+	int radix = 10;
+	bool sign = true;
+
+	argp++;
+
+	while (*fmt) {
+		switch (state) {
+			case PRINTF_STATE_NORMAL:
+				switch (*fmt) {
+				case '%':
+					state = PRINTF_STATE_LENGTH;
+					break;
+				case '\n':
+					tty_putchar('\n');
+					tty_putchar('\r');
+					break;
+				default:
+					tty_putchar(*fmt);
+					break;
+				}
+				break;
+			case PRINTF_STATE_LENGTH:
+				switch (*fmt) {
+					case 'h':
+						state = PRINTF_STATE_LENGTH_SHORT;
+						length = PRINTF_LENGTH_SHORT;
+						break;
+					case 'l':
+						state = PRINTF_STATE_LENGTH_LONG;
+						length = PRINTF_LENGTH_LONG;
+						break;
+					default:
+						goto PRINTF_STATE_SPEC_;
+				}
+				break;
+			case PRINTF_STATE_LENGTH_SHORT:
+				if (*fmt == 'h') {
+					state = PRINTF_STATE_SPEC;
+					length = PRINTF_LENGTH_SHORT_SHORT;
+				} else {
+					goto PRINTF_STATE_SPEC_;
+				}
+			case PRINTF_STATE_LENGTH_LONG:
+				if (*fmt == 'l') {
+					state = PRINTF_STATE_SPEC;
+					length = PRINTF_LENGTH_LONG_LONG;
+				} else {
+					goto PRINTF_STATE_SPEC_;
+				}
+			case PRINTF_STATE_SPEC:
+				PRINTF_STATE_SPEC_:
+				switch (*fmt) {
+					case 'c':
+						tty_putchar((char)*argp);
+						argp++;
+						break;
+					case 's':
+						if (length == PRINTF_LENGTH_LONG || length == PRINTF_LENGTH_LONG_LONG) {
+							puts_f(*(const char far**)argp);
+							argp++;
+							break;
+						} else {
+							tty_puts(*(const char**)argp);
+							argp++;
+							break;
+						}
+					case '%':
+						tty_putchar('%');
+						break;
+					case 'd':
+					case 'i':
+						radix = 10;
+						sign = true;
+						argp = printf_number(argp, length, sign, radix);
+						break;
+					case 'u':
+						radix = 10;
+						sign = false;
+						argp = printf_number(argp, length, sign, radix);
+						break;
+					case 'X':
+					case 'x':
+					case 'p':
+						radix = 16;
+						sign = false;
+						argp = printf_number(argp, length, sign, radix);
+						break;
+					case 'o':
+						radix = 8;
+						sign = false;
+						argp = printf_number(argp, length, sign, radix);
+						break;
+					default:
+						break;
+				}
+
+				state = PRINTF_STATE_NORMAL;
+				length = PRINTF_LENGTH_DEFAULT;
+				break;
+		}
+
+		fmt++;
+	}
+}
+
+void _cdecl tty_printf(const char* fmt, int* argp) {
 	int state = PRINTF_STATE_NORMAL;
 	int length = PRINTF_LENGTH_DEFAULT;
 	int radix = 10;

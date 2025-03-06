@@ -19,7 +19,7 @@ bool check_range(uint32_t number, uint32_t range_start, uint32_t range_end) {
 
 void print_memory_table() {
 	for (int i = 0; i < count; i++) {
-		tty_printf("Index: %d\n", i);
+		kernel_printf("Index: %d\n", i);
 	}
 }
 

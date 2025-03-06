@@ -24,7 +24,8 @@
 void tty_clear();
 void tty_putchar(char c);
 void tty_puts(const char* str);
-void tty_printf(const char* fmt, ...);
+void _cdecl kernel_printf(const char* fmt, ...);
+void _cdecl tty_printf(const char* fmt, int* argp);
 void tty_buffer_clear();
 char tty_getchar();
 char* tty_gets();

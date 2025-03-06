@@ -2,7 +2,6 @@
 #include <string.h>
 #include <memory.h>
 #include <memdefs.h>
-#include <kernel/tty.h>
 #include <kernel/allocator.h>
 
 uint32_t align(uint32_t number, uint32_t alignTo) {

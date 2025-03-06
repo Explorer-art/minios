@@ -4,7 +4,7 @@
 
 typedef void (*putchar_syscall_ptr)(char c);
 typedef void (*puts_syscall_ptr)(const char* str);
-typedef void (*printf_syscall_ptr)(const char* fmt, ...);
+typedef void (*printf_syscall_ptr)(const char* fmt, int* argp);
 typedef char (*getchar_syscall_ptr);
 typedef char* (*gets_syscall_ptr)(char* str);
 typedef void* (*malloc_syscall_ptr)(uint32_t size);
@@ -20,4 +20,5 @@ typedef struct {
 	free_syscall_ptr far* free;
 } Syscalls;
 
+void _cdecl printf(const char* fmt, int* argp);
 bool Syscall_Init();

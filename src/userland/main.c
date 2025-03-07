@@ -1,9 +1,8 @@
 #include <stdio.h>
 
-extern void _cdecl main();
-
-void _cdecl main() {
+void _cdecl kmain() {
 	printf("Hello world!\n");
-
+	
+end:
 	for(;;);
 }

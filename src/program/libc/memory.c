@@ -1,5 +1,4 @@
 #include <memory.h>
-#include <kernel/tty.h>
 
 void far* memcpy(void far* dst, const void far* src, uint16_t num)
 {

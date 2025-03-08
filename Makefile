@@ -16,6 +16,7 @@ $(BUILD_DIR)/$(FLOPPY_IMAGE): bootloader
 	dd if=$(BUILD_DIR)/boot.bin of=$(BUILD_DIR)/$(FLOPPY_IMAGE) conv=notrunc
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) $(BUILD_DIR)/kernel.bin "::kernel.bin"
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) file.txt "::file.txt"
+	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) program.bin "::program.bin"
 	mmd -i $(BUILD_DIR)/$(FLOPPY_IMAGE) "::dir"
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) file.txt "::dir/file.txt"
 

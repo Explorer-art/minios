@@ -4,9 +4,8 @@
 #include <kernel/tty.h>
 #include <kernel/syscall.h>
 #include <kernel/terminal.h>
+#include <kernel/executor.h>
 #include <utils.h>
-
-printf_syscall_ptr far* printf_syscall = (printf_syscall_ptr far*)0x0055270;
 
 void _cdecl kmain() {
 	DISK disk;
@@ -27,8 +26,12 @@ void _cdecl kmain() {
 		goto end;
 	}
 
+	// kernel_printf("Hello from kernel!\n");
+
+	execute(disk, "/program.bin");
+
 	// Передача управления терминалу
-	terminal_main(disk);
+	// terminal_main(disk);
 end:
 	for(;;);
 }

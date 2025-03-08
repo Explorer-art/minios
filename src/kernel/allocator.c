@@ -2,9 +2,6 @@
 #include <stdint.h>
 #include <kernel/tty.h>
 
-#define MEMORY_SIZE 16384
-#define MEMORY_MAX_HANDLES 100
-
 static uint8_t memory[MEMORY_SIZE] = {0};
 static MemoryData memory_table[MEMORY_MAX_HANDLES];
 static int count = 0;

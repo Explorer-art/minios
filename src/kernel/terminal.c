@@ -9,13 +9,9 @@
 #include <utils.h>
 
 static DISK g_disk;
-static void far* g_data = (void far*) 0x00500200;
 static char g_current_dir[256] = "/";
 
 bool ls() {
-	memset(g_data, 0, 512);
-	DISK_ReadSectors(&g_disk, 19, 1, g_data);
-
 	FAT_File far* fd = FAT_Open(&g_disk, g_current_dir);
 	FAT_Entry entry;
 	int i = 0;
@@ -93,14 +89,15 @@ bool cd(char** args) {
 bool cat(char** args) {
 	char buffer[256] = {0};
 
-	memset(g_data, 0, 512);
-	DISK_ReadSectors(&g_disk, 19, 1, g_data);
-
 	if (args[1][0] == '/') {
 		strcpy(buffer, args[1]);
 	} else {
 		strcpy(buffer, g_current_dir);
-		strcat(buffer, "/");
+
+		if (strcmp(g_current_dir, "/") != 0) {
+			strcat(buffer, "/");
+		}
+
 		strcat(buffer, args[1]);
 	}
 

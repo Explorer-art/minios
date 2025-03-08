@@ -3,13 +3,13 @@
 #include <kernel/syscall.h>
 
 Syscalls syscalls = {
-	(putchar_syscall_ptr far*)0x0055250,
-	(puts_syscall_ptr far*)0x0055270,
-	(printf_syscall_ptr far*)0x0055290,
-	(getchar_syscall_ptr far*)0x0055310,
-	(gets_syscall_ptr far*)0x0055330,
-	(malloc_syscall_ptr far*)0x0055350,
-	(free_syscall_ptr far*)0x0055370
+	(putchar_syscall_ptr far*)0x00500250,
+	(puts_syscall_ptr far*)0x00500270,
+	(printf_syscall_ptr far*)0x00500290,
+	(getchar_syscall_ptr far*)0x00500310,
+	(gets_syscall_ptr far*)0x00500330,
+	(malloc_syscall_ptr far*)0x00500350,
+	(free_syscall_ptr far*)0x00500370
 };
 
 bool Syscall_Init() {

@@ -10,5 +10,5 @@ make
 
 ### Запуск
 ```
-qemu-system-i386 -fda build/minios.img
+./run.sh
 ```

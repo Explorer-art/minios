@@ -2,61 +2,11 @@ bits 16
 
 %define ENDL 0x0A, 0x0D
 
-mov ah, 0Eh
-mov al, 'H'
-int 10h
+mov ax, cs         ; Устанавливаем сегмент данных (если программа в CS)
+mov ds, ax
 
-mov ah, 0Eh
-mov al, 'e'
-int 10h
-
-mov ah, 0Eh
-mov al, 'l'
-int 10h
-
-mov ah, 0Eh
-mov al, 'l'
-int 10h
-
-mov ah, 0Eh
-mov al, 'o'
-int 10h
-
-mov ah, 0Eh
-mov al, ' '
-int 10h
-
-mov ah, 0Eh
-mov al, 'w'
-int 10h
-
-mov ah, 0Eh
-mov al, 'o'
-int 10h
-
-mov ah, 0Eh
-mov al, 'r'
-int 10h
-
-mov ah, 0Eh
-mov al, 'l'
-int 10h
-
-mov ah, 0Eh
-mov al, 'd'
-int 10h
-
-mov ah, 0Eh
-mov al, '!'
-int 10h
-
-mov ah, 0Eh
-mov al, 0Ah
-int 10h
-
-mov ah, 0Eh
-mov al, 0Dh
-int 10h
+mov dx, msg_hello  ; Загружаем адрес строки в DX
+call puts
 
 ret
 
@@ -64,28 +14,30 @@ ret
 ; Вывод строки на экран
 ;
 ; Параметры:
-; - ds:si: адрес начала строки
+; - ds:dx: адрес начала строки
 ;
 
 puts:
-    push si
+    push dx
     push ax
     push bx
 
-.loop:
-    mov ah, 0Eh
-    mov bh, 0
-    lodsb
-    cmp al, 0
-    je .done
-    int 10h
+    mov bx, dx      ; Копируем адрес строки в BX
 
-    jmp .loop
+.loop:
+    mov al, [bx]    ; Загружаем байт из [DS:BX] в AL
+    cmp al, 0       ; Если нулевой символ, завершаем вывод
+    je .done
+    mov ah, 0Eh     ; Функция BIOS для вывода символа в AL
+    int 10h
+    inc bx          ; Переход к следующему символу
+    jmp .loop       ; Повторяем цикл
 
 .done:
     pop bx
     pop ax
-    pop si
+    pop dx
+
     ret
 
-msg_hello		db "Hello world from program!", ENDL, 0
+msg_hello db "Hello world from program!", ENDL, 0

@@ -30,6 +30,8 @@ void _cdecl kmain() {
 
 	execute(disk, "/program.bin");
 
+	kernel_printf("System halted\n");
+
 	// Передача управления терминалу
 	// terminal_main(disk);
 end:

@@ -239,8 +239,9 @@ puts:
     push ax
     push bx
 
-.loop:
     mov ah, 0Eh
+
+.loop:
     mov bh, 0
     lodsb
     cmp al, 0

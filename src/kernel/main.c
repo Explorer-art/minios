@@ -26,6 +26,12 @@ void _cdecl kmain() {
 		goto end;
 	}
 
+	// uint8_t far* ptr = (uint8_t far*)0x00005000;
+	// *ptr = 'H';
+
+	// putchar_syscall_ptr far* putchar_syscall = (putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00);
+	// (*putchar_syscall)();
+
 	// kernel_printf("Hello from kernel!\n");
 
 	execute(disk, "/program.bin");

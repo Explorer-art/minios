@@ -9,27 +9,27 @@ BUILD_DIR?=build
 SOURCES_C=$(wildcard *.c) $(wildcard libc/*.c)
 SOURCES_ASM=$(wildcard *.asm)
 
-OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/kernel/c/%.obj, $(SOURCES_C))
-OBJECTS_ASM=$(patsubst %.asm, $(BUILD_DIR)/kernel/asm/%.obj, $(SOURCES_ASM))
+OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/c/%.obj, $(SOURCES_C))
+OBJECTS_ASM=$(patsubst %.asm, $(BUILD_DIR)/asm/%.obj, $(SOURCES_ASM))
 
 .PHONY: all clean
 
-all: kernel
+all: program
 
-kernel: $(BUILD_DIR)/kernel.bin
+program: $(BUILD_DIR)/program.bin
 
-$(BUILD_DIR)/kernel.bin: $(OBJECTS_ASM) $(OBJECTS_C)
-	$(LD16) NAME $(BUILD_DIR)/kernel.bin FILE \{ $(OBJECTS_ASM) $(OBJECTS_C) \} OPTION MAP=$(BUILD_DIR)/kernel.map @linker.ld
+$(BUILD_DIR)/program.bin: $(OBJECTS_ASM) $(OBJECTS_C)
+	$(LD16) NAME $(BUILD_DIR)/program.bin FILE \{ $(OBJECTS_ASM) $(OBJECTS_C) \} OPTION MAP=$(BUILD_DIR)/program.map @linker.ld
 
-$(BUILD_DIR)/kernel/c/%.obj: %.c always
+$(BUILD_DIR)/c/%.obj: %.c always
 	$(CC16) $(CFLAGS16) -fo=$@ $<
 
-$(BUILD_DIR)/kernel/asm/%.obj: %.asm always
+$(BUILD_DIR)/asm/%.obj: %.asm always
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 always:
-	mkdir -p $(BUILD_DIR)/kernel/c/libc
-	mkdir -p $(BUILD_DIR)/kernel/asm
+	mkdir -p $(BUILD_DIR)/c/libc
+	mkdir -p $(BUILD_DIR)/asm
 
 clean:
-	rm -f $(BUILD_DIR)/kernel.bin
+	rm -f $(BUILD_DIR)/program.bin

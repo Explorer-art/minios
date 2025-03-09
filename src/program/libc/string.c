@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
 
 char* strcpy(char* dst, char* src) {
   char* orig_dst = dst;

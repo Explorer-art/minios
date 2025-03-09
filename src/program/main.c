@@ -1,9 +1,8 @@
-#include <stdint.h>
-#include <kernel/tty.h>
+#include <stdio.h>
 
 void _cdecl kmain() {
-	kernel_printf("Hello world!\n");
-
+	printf("Hello world!\n");
+	
 end:
 	for(;;);
 }

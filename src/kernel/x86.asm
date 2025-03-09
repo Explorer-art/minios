@@ -122,6 +122,7 @@ _write_char:
     push bp
     mov bp, sp
 
+    push ax
     push bx
 
     mov ah, 0Eh
@@ -130,6 +131,7 @@ _write_char:
     int 10h
 
     pop bx
+    pop ax
 
     mov sp, bp
     pop bp

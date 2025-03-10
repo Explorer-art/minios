@@ -2,6 +2,10 @@
 #include <kernel/allocator.h>
 #include <kernel/syscall.h>
 
+void test() {
+	kernel_printf("Hello from kernel syscall!\n");
+}
+
 Syscalls syscalls = {
 	(putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00),
 	(puts_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x20),
@@ -13,7 +17,7 @@ Syscalls syscalls = {
 };
 
 bool Syscall_Init() {
-	*syscalls.putchar = (putchar_syscall_ptr)&tty_putchar;
+	*syscalls.putchar = (putchar_syscall_ptr)&test;
 	*syscalls.puts = (puts_syscall_ptr)&tty_puts;
 	*syscalls.printf = (printf_syscall_ptr)&tty_printf;
 	*syscalls.getchar = (getchar_syscall_ptr)&tty_getchar;

@@ -6,6 +6,8 @@ org 0x27000
 mov si, msg_hello
 call puts
 
+call [8000h]
+
 ret
 
 puts:
@@ -30,4 +32,4 @@ puts:
     pop si
     ret
 
-msg_hello db "Hello world from program!", ENDL, 0
+msg_hello db "Hello from program!", ENDL, 0

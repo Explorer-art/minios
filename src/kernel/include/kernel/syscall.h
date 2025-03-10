@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define SYSCALL_VECTOR_BASE 0x20008000
+#define SYSCALL_VECTOR_BASE 0x20005000
 
 typedef void (*putchar_syscall_ptr)(char c);
 typedef void (*puts_syscall_ptr)(const char* str);

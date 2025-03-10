@@ -6,7 +6,7 @@ org 0x27000
 mov ax, msg_hello
 push ax
 
-call [8004h]
+call [5004h]
 
 ret
 

@@ -32,7 +32,7 @@ void _cdecl kmain() {
 	// putchar_syscall_ptr far* putchar_syscall = (putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00);
 	// (*putchar_syscall)();
 
-	kernel_printf("Hello from kernel!\n");
+	// kernel_printf("Hello from kernel!\n");
 
 	execute(disk, "/program.bin");
 

@@ -4,7 +4,7 @@
 
 #define SYSCALL_VECTOR_BASE 0x20008000
 
-typedef void (*putchar_syscall_ptr)();
+typedef void (*putchar_syscall_ptr)(char c);
 typedef void (*puts_syscall_ptr)(const char* str);
 typedef void (*printf_syscall_ptr)(const char* fmt, int* argp);
 typedef char (*getchar_syscall_ptr);

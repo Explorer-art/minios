@@ -2,22 +2,18 @@
 #include <kernel/allocator.h>
 #include <kernel/syscall.h>
 
-void test() {
-	kernel_printf("Hello from kernel syscall!\n");
-}
-
 Syscalls syscalls = {
 	(putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00),
-	(puts_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x20),
-	(printf_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x40),
-	(getchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x60),
-	(gets_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x80),
-	(malloc_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x100),
-	(free_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x120)
+	(puts_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x04),
+	(printf_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x08),
+	(getchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x0C),
+	(gets_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x10),
+	(malloc_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x14),
+	(free_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x18)
 };
 
 bool Syscall_Init() {
-	*syscalls.putchar = (putchar_syscall_ptr)&test;
+	*syscalls.putchar = (putchar_syscall_ptr)&tty_putchar;
 	*syscalls.puts = (puts_syscall_ptr)&tty_puts;
 	*syscalls.printf = (printf_syscall_ptr)&tty_printf;
 	*syscalls.getchar = (getchar_syscall_ptr)&tty_getchar;

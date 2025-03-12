@@ -10,4 +10,4 @@ typedef struct {
 	command_func_t func;
 } CommandData;
 
-void terminal_main(DISK disk);
+void shell_main(DISK disk);

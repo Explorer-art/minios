@@ -14,12 +14,6 @@ bool check_range(uint32_t number, uint32_t range_start, uint32_t range_end) {
 	return false;
 }
 
-void print_memory_table() {
-	for (int i = 0; i < count; i++) {
-		kernel_printf("Index: %d\n", i);
-	}
-}
-
 void* mem_alloc(uint32_t size) {
 	if (size > MEMORY_SIZE || count >= MEMORY_MAX_HANDLES) {
 		return NULL;

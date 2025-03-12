@@ -3,43 +3,38 @@
 #include <kernel/fat.h>
 #include <kernel/tty.h>
 #include <kernel/syscall.h>
-#include <kernel/terminal.h>
+#include <kernel/shell.h>
 #include <kernel/executor.h>
-#include <utils.h>
+#include <kernel/panic.h>
 
 void _cdecl kmain() {
 	DISK disk;
 
+	kprintf("Disk init...\n");
+
 	if (!DISK_Init(&disk, 0)) {
-		kernel_printf("Disk init error\n");
+		kprintf("ERROR! Disk init failed\n");
 		goto end;
-		
 	}
+
+	kprintf("FAT init...\n");
 
 	if (!FAT_Init(&disk)) {
-		kernel_printf("FAT init error\n");
+		kprintf("ERROR! FAT init failed\n");
 		goto end;
 	}
+
+	kprintf("Syscall init...\n");
 
 	if (!Syscall_Init()) {
-		kernel_printf("Syscall init error\n");
+		kprintf("ERROR! Syscall init failed\n");
 		goto end;
 	}
 
-	// uint8_t far* ptr = (uint8_t far*)0x00005000;
-	// *ptr = 'H';
-
-	// putchar_syscall_ptr far* putchar_syscall = (putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00);
-	// (*putchar_syscall)();
-
-	// kernel_printf("Hello from kernel!\n");
-
-	execute(disk, "/program.bin");
-
-	kernel_printf("System halted\n");
-
 	// Передача управления терминалу
-	// terminal_main(disk);
+	shell_main(disk);
+
+	kprintf("System halted\n");
 end:
 	for(;;);
 }

@@ -1,13 +1,12 @@
 #include <string.h>
 #include <memory.h>
-#include <kernel/tty.h>
-#include <kernel/executor.h>
 #include <kernel/fat.h>
+#include <kernel/executor.h>
 
-uint8_t far* g_execute_code = (uint8_t far*)0x00007000;
+uint8_t far* g_execute_code = (uint8_t far*)USERLAND_ADDR;
 
-void execute(DISK disk, const char* filename) {
-	char buffer[10240];
+void execute_program(DISK disk, const char* filename) {
+	char buffer[BUFFER];
 	uint8_t execute_code_offset = 0;
 
 	FAT_File far* fd = FAT_Open(&disk, filename);

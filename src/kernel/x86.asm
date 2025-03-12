@@ -6,8 +6,9 @@ global __U4D
 global __U4M
 global _div64_32
 global _clear_screen
-global _write_char
-global _read_char
+global _putchar
+global _getchar
+global _get_registers
 global _disk_reset
 global _disk_read
 global _disk_get_params
@@ -118,7 +119,7 @@ _clear_screen:
     pop bp
     ret
 
-_write_char:
+_putchar:
     push bp
     mov bp, sp
 
@@ -137,7 +138,7 @@ _write_char:
     pop bp
     ret
 
-_read_char:
+_getchar:
     push bp
     mov bp, sp
 
@@ -149,6 +150,25 @@ _read_char:
     xor ah, ah
 
     pop bx
+
+    mov sp, bp
+    pop bp
+    ret
+
+;void _cdecl registers_dump(uint16_t* ax, uint16_t* bx, uint16_t* cx, uint16_t* dx);
+
+_get_registers:
+    push bp
+    mov bp, sp
+
+    mov [bp + 4], ax
+    mov [bp + 6], bx
+    mov [bp + 8], cx
+    mov [bp + 10], dx
+    mov [bp + 12], si
+    mov [bp + 14], di
+    mov [bp + 16], sp
+    mov [bp + 18], bp
 
     mov sp, bp
     pop bp

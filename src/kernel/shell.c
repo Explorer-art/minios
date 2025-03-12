@@ -1,4 +1,5 @@
-#include <kernel/terminal.h>
+#include <kernel/shell.h>
+#include <kernel/x86.h>
 #include <kernel/tty.h>
 #include <kernel/fat.h>
 #include <kernel/disk.h>
@@ -18,10 +19,10 @@ bool ls() {
 
 	while (FAT_ReadEntry(&g_disk, fd, &entry) && i++ < 5) {
 		for (int i = 0; i < 11; i++) {
-			tty_putchar(entry.Name[i]);
+			putchar(entry.Name[i]);
 		}
 
-		kernel_printf("\n");
+		kprintf("\n");
 	}
 
 	FAT_Close(fd);
@@ -33,8 +34,8 @@ bool cd(char** args) {
 	int args_count = get_args_count(args);
 
 	if (args_count < 2) {
-		kernel_printf("Incorrect command format!\n");
-		kernel_printf("Example: cd <dir>\n\n");
+		kprintf("Incorrect command format!\n");
+		kprintf("Format: cd <dir>\n\n");
 		return false;
 	}
 
@@ -87,6 +88,14 @@ bool cd(char** args) {
 }
 
 bool cat(char** args) {
+	int args_count = get_args_count(args);
+
+	if (args_count < 2) {
+		kprintf("Incorrect command format!\n");
+		kprintf("Format: cat <file>\n\n");
+		return false;
+	}
+
 	char buffer[256] = {0};
 
 	if (args[1][0] == '/') {
@@ -109,20 +118,34 @@ bool cat(char** args) {
 	while ((read_bytes = FAT_Read(&g_disk, fd, sizeof(buffer), buffer))) {
 		for (uint32_t i = 0; i < read_bytes; i++) {
 			if (buffer[i] == '\n') {
-				tty_putchar('\r');
+				putchar('\r');
 			}
 
-			tty_putchar(buffer[i]);
+			putchar(buffer[i]);
 		}
 	}
 
-	kernel_printf("\n\n");
+	kprintf("\n\n");
 
 	FAT_Close(fd);
 }
 
+bool exec(char** args) {
+	int args_count = get_args_count(args);
+
+	if (args_count < 2) {
+		kprintf("Incorrect format!\n");
+		kprintf("Format: exec <file>\n\n");
+		return false;
+	}
+
+	execute_program(g_disk, args[1]);
+
+	return true;
+}
+
 bool info() {
-	kernel_printf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
+	kprintf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
 	return true;
 }
 
@@ -130,16 +153,16 @@ bool echo(char** args) {
 	int args_count = get_args_count(args);
 
 	if (args_count < 2) {
-		kernel_printf("Incorrect command format!\n");
-		kernel_printf("Example: echo <text>\n\n");
+		kprintf("Incorrect command format!\n");
+		kprintf("Example: echo <text>\n\n");
 		return false;
 	}
 
 	for (int i = 1; i < args_count; i++) {
-		kernel_printf("%s ", args[i]);
+		kprintf("%s ", args[i]);
 	}
 
-	kernel_printf("\n\n");
+	kprintf("\n\n");
 
 	return true;
 }
@@ -156,6 +179,7 @@ static const CommandData commands_map[] = {
 	{"ls", "Read directory", ls},
 	{"cd", "Change directory", cd},
 	{"cat", "Read file", cat},
+	{"exec", "Execute program", exec},
 	{"info", "Information about the system", info},
 	{"echo", "Print test to the terminal", echo},
 	{"clear", "Clear terminal", clear}
@@ -163,10 +187,10 @@ static const CommandData commands_map[] = {
 
 bool help() {
 	for (int i = 0; i < sizeof(commands_map) / sizeof(CommandData); i++) {
-		kernel_printf("%s - %s\n", commands_map[i].command, commands_map[i].description);
+		kprintf("%s - %s\n", commands_map[i].command, commands_map[i].description);
 	}
 
-	kernel_printf("\n");
+	kprintf("\n");
 	
 	return true;
 }
@@ -180,21 +204,21 @@ bool command_handle(char* command) {
 		}
 	}
 
-	kernel_printf("Unknown command!\n\n");
+	kprintf("Unknown command!\n\n");
 
 	return false;
 }
 
-void terminal_main(DISK disk) {
+void shell_main(DISK disk) {
 	g_disk = disk;
 	char* command;
 
 	tty_clear();
 
-	kernel_printf("Welcome to Minios!\n\n");
+	kprintf("Welcome to Minios!\n\n");
 
 	while (true) {
-		kernel_printf("%s %s > ", PROMPT, g_current_dir);
+		kprintf("%s %s > ", PROMPT, g_current_dir);
 
 		command = tty_gets();
 		command_handle(command);

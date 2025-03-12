@@ -92,7 +92,7 @@ bool FAT_Init(DISK* disk)
     // read boot sector
     if (!FAT_ReadBootSector(disk))
     {
-        kernel_printf("FAT: read boot sector failed\r\n");
+        kprintf("FAT: read boot sector failed\r\n");
         return false;
     }
 
@@ -101,13 +101,13 @@ bool FAT_Init(DISK* disk)
     uint32_t fatSize = g_Data->BS.BootSector.BytesPerSector * g_Data->BS.BootSector.SectorsPerFat;
     if (sizeof(FAT_Data) + fatSize >= MEMORY_FAT_SIZE)
     {
-        kernel_printf("FAT: not enough memory to read FAT! Required %lu, only have %u\r\n", sizeof(FAT_Data) + fatSize, MEMORY_FAT_SIZE);
+        kprintf("FAT: not enough memory to read FAT! Required %lu, only have %u\r\n", sizeof(FAT_Data) + fatSize, MEMORY_FAT_SIZE);
         return false;
     }
 
     if (!FAT_ReadFat(disk))
     {
-        kernel_printf("FAT: read FAT failed\r\n");
+        kprintf("FAT: read FAT failed\r\n");
         return false;
     }
 
@@ -126,7 +126,7 @@ bool FAT_Init(DISK* disk)
 
     if (!DISK_ReadSectors(disk, rootDirLba, 1, g_Data->RootDirectory.Buffer))
     {
-        kernel_printf("FAT: read root directory failed\r\n");
+        kprintf("FAT: read root directory failed\r\n");
         return false;
     }
 
@@ -159,7 +159,7 @@ FAT_File far* FAT_OpenEntry(DISK* disk, FAT_Entry* entry)
     // out of handles
     if (handle < 0)
     {
-        kernel_printf("FAT: out of file handles\r\n");
+        kprintf("FAT: out of file handles\r\n");
         return false;
     }
 
@@ -175,7 +175,7 @@ FAT_File far* FAT_OpenEntry(DISK* disk, FAT_Entry* entry)
 
     if (!DISK_ReadSectors(disk, FAT_ClusterToLba(fd->CurrentCluster), 1, fd->Buffer))
     {
-        kernel_printf("FAT: read error\r\n");
+        kprintf("FAT: read error\r\n");
         return false;
     }
 
@@ -216,7 +216,7 @@ uint32_t FAT_Read(DISK* disk, FAT_File far* file, uint32_t byteCount, void* data
         fd->Public.Position += take;
         byteCount -= take;
 
-        // kernel_printf("leftInBuffer=%lu take=%lu\r\n", leftInBuffer, take);
+        // kprintf("leftInBuffer=%lu take=%lu\r\n", leftInBuffer, take);
         // See if we need to read more data
         if (leftInBuffer == take)
         {
@@ -228,7 +228,7 @@ uint32_t FAT_Read(DISK* disk, FAT_File far* file, uint32_t byteCount, void* data
                 // read next sector
                 if (!DISK_ReadSectors(disk, fd->CurrentCluster, 1, fd->Buffer))
                 {
-                    kernel_printf("FAT: read error!\r\n");
+                    kprintf("FAT: read error!\r\n");
                     break;
                 }
             }
@@ -251,7 +251,7 @@ uint32_t FAT_Read(DISK* disk, FAT_File far* file, uint32_t byteCount, void* data
                 // read next sector
                 if (!DISK_ReadSectors(disk, FAT_ClusterToLba(fd->CurrentCluster) + fd->CurrentSectorInCluster, 1, fd->Buffer))
                 {
-                    kernel_printf("FAT: read error!\r\n");
+                    kprintf("FAT: read error!\r\n");
                     break;
                 }
             }
@@ -351,7 +351,7 @@ FAT_File far* FAT_Open(DISK* disk, const char* path)
             // check if directory
             if (!isLast && entry.Attributes & FAT_ATTRIBUTE_DIRECTORY == 0)
             {
-                kernel_printf("FAT: %s not a directory\r\n", name);
+                kprintf("FAT: %s not a directory\r\n", name);
                 return NULL;
             }
 
@@ -362,7 +362,7 @@ FAT_File far* FAT_Open(DISK* disk, const char* path)
         {
             FAT_Close(current);
 
-            kernel_printf("FAT: %s not found\r\n", name);
+            kprintf("FAT: %s not found\r\n", name);
             return NULL;
         }
     }

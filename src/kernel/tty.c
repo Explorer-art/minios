@@ -10,16 +10,12 @@ void tty_clear() {
 	clear_screen();
 }
 
-void tty_putchar(char c) {
-	write_char(c);
-}
-
 void tty_puts(const char* str) {
 	while (*str) {
-		tty_putchar(*str);
+		putchar(*str);
 
 		if (*str == '\n') {
-			tty_putchar('\r');
+			putchar('\r');
 		}
 		
 		str++;
@@ -28,7 +24,7 @@ void tty_puts(const char* str) {
 
 void puts_f(const char far* str) {
 	while (*str) {
-		tty_putchar(*str);
+		putchar(*str);
 		str++;
 	}
 }
@@ -114,12 +110,12 @@ int* printf_number(int* argp, int length, bool sign, int radix)
 
     // print number in reverse order
     while (--pos >= 0)
-        tty_putchar(buffer[pos]);
+        putchar(buffer[pos]);
 
     return argp;
 }
 
-void _cdecl kernel_printf(const char* fmt, ...) {
+void _cdecl kprintf(const char* fmt, ...) {
 	int* argp = (int*)&fmt;
 	int state = PRINTF_STATE_NORMAL;
 	int length = PRINTF_LENGTH_DEFAULT;
@@ -136,11 +132,11 @@ void _cdecl kernel_printf(const char* fmt, ...) {
 					state = PRINTF_STATE_LENGTH;
 					break;
 				case '\n':
-					tty_putchar('\n');
-					tty_putchar('\r');
+					putchar('\n');
+					putchar('\r');
 					break;
 				default:
-					tty_putchar(*fmt);
+					putchar(*fmt);
 					break;
 				}
 				break;
@@ -176,7 +172,7 @@ void _cdecl kernel_printf(const char* fmt, ...) {
 				PRINTF_STATE_SPEC_:
 				switch (*fmt) {
 					case 'c':
-						tty_putchar((char)*argp);
+						putchar((char)*argp);
 						argp++;
 						break;
 					case 's':
@@ -190,115 +186,7 @@ void _cdecl kernel_printf(const char* fmt, ...) {
 							break;
 						}
 					case '%':
-						tty_putchar('%');
-						break;
-					case 'd':
-					case 'i':
-						radix = 10;
-						sign = true;
-						argp = printf_number(argp, length, sign, radix);
-						break;
-					case 'u':
-						radix = 10;
-						sign = false;
-						argp = printf_number(argp, length, sign, radix);
-						break;
-					case 'X':
-					case 'x':
-					case 'p':
-						radix = 16;
-						sign = false;
-						argp = printf_number(argp, length, sign, radix);
-						break;
-					case 'o':
-						radix = 8;
-						sign = false;
-						argp = printf_number(argp, length, sign, radix);
-						break;
-					default:
-						break;
-				}
-
-				state = PRINTF_STATE_NORMAL;
-				length = PRINTF_LENGTH_DEFAULT;
-				break;
-		}
-
-		fmt++;
-	}
-}
-
-void _cdecl tty_printf(const char* fmt, int* argp) {
-	int state = PRINTF_STATE_NORMAL;
-	int length = PRINTF_LENGTH_DEFAULT;
-	int radix = 10;
-	bool sign = true;
-
-	argp++;
-
-	while (*fmt) {
-		switch (state) {
-			case PRINTF_STATE_NORMAL:
-				switch (*fmt) {
-				case '%':
-					state = PRINTF_STATE_LENGTH;
-					break;
-				case '\n':
-					tty_putchar('\n');
-					tty_putchar('\r');
-					break;
-				default:
-					tty_putchar(*fmt);
-					break;
-				}
-				break;
-			case PRINTF_STATE_LENGTH:
-				switch (*fmt) {
-					case 'h':
-						state = PRINTF_STATE_LENGTH_SHORT;
-						length = PRINTF_LENGTH_SHORT;
-						break;
-					case 'l':
-						state = PRINTF_STATE_LENGTH_LONG;
-						length = PRINTF_LENGTH_LONG;
-						break;
-					default:
-						goto PRINTF_STATE_SPEC_;
-				}
-				break;
-			case PRINTF_STATE_LENGTH_SHORT:
-				if (*fmt == 'h') {
-					state = PRINTF_STATE_SPEC;
-					length = PRINTF_LENGTH_SHORT_SHORT;
-				} else {
-					goto PRINTF_STATE_SPEC_;
-				}
-			case PRINTF_STATE_LENGTH_LONG:
-				if (*fmt == 'l') {
-					state = PRINTF_STATE_SPEC;
-					length = PRINTF_LENGTH_LONG_LONG;
-				} else {
-					goto PRINTF_STATE_SPEC_;
-				}
-			case PRINTF_STATE_SPEC:
-				PRINTF_STATE_SPEC_:
-				switch (*fmt) {
-					case 'c':
-						tty_putchar((char)*argp);
-						argp++;
-						break;
-					case 's':
-						if (length == PRINTF_LENGTH_LONG || length == PRINTF_LENGTH_LONG_LONG) {
-							puts_f(*(const char far**)argp);
-							argp++;
-							break;
-						} else {
-							tty_puts(*(const char**)argp);
-							argp++;
-							break;
-						}
-					case '%':
-						tty_putchar('%');
+						putchar('%');
 						break;
 					case 'd':
 					case 'i':
@@ -340,10 +228,6 @@ void tty_buffer_clear() {
 	memset(buffer, '\0', BUFFER_SIZE);
 }
 
-char tty_getchar() {
-	return read_char();
-}
-
 char* tty_gets() {
 	int i = 0;
 	char c;
@@ -351,22 +235,22 @@ char* tty_gets() {
 	tty_buffer_clear();
 
 	while (true) {
-		c = tty_getchar();
+		c = getchar();
 
 		if (c == ENTER || i >= BUFFER_SIZE) {
-			tty_putchar('\n');
-			tty_putchar('\r');
+			putchar('\n');
+			putchar('\r');
 			break;
 		} else if (c == BACKSPACE) {
 			if (i > 0) {
-				tty_putchar(BACKSPACE);
-				tty_putchar(SPACE);
-				tty_putchar(BACKSPACE);
+				putchar(BACKSPACE);
+				putchar(SPACE);
+				putchar(BACKSPACE);
 				i--;
 				buffer[i] = '\0';
 			}
 		} else {
-			write_char(c);
+			putchar(c);
 			buffer[i] = c;
 			i++;
 		}

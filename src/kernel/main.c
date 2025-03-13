@@ -5,7 +5,6 @@
 #include <kernel/syscall.h>
 #include <kernel/shell.h>
 #include <kernel/executor.h>
-#include <kernel/panic.h>
 
 void _cdecl kmain() {
 	DISK disk;
@@ -31,8 +30,10 @@ void _cdecl kmain() {
 		goto end;
 	}
 
+	execute_program(disk, "program.bin");
+
 	// Передача управления терминалу
-	shell_main(disk);
+	// shell_main(disk);
 
 	kprintf("System halted\n");
 end:

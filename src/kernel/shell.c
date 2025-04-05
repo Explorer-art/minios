@@ -2,22 +2,20 @@
 #include <kernel/x86.h>
 #include <kernel/tty.h>
 #include <kernel/fat.h>
-#include <kernel/disk.h>
 #include <kernel/config.h>
 #include <stdint.h>
 #include <string.h>
 #include <memory.h>
 #include <utils.h>
 
-static DISK g_disk;
 static char g_current_dir[256] = "/";
 
 bool ls() {
-	FAT_File far* fd = FAT_Open(&g_disk, g_current_dir);
+	FAT_File far* fd = FAT_Open(g_current_dir);
 	FAT_Entry entry;
 	int i = 0;
 
-	while (FAT_ReadEntry(&g_disk, fd, &entry) && i++ < 5) {
+	while (FAT_ReadEntry(fd, &entry) && i++ < 5) {
 		for (int i = 0; i < 11; i++) {
 			putchar(entry.Name[i]);
 		}
@@ -110,12 +108,12 @@ bool cat(char** args) {
 		strcat(buffer, args[1]);
 	}
 
-	FAT_File far* fd = FAT_Open(&g_disk, buffer);
+	FAT_File far* fd = FAT_Open(buffer);
 	uint32_t read_bytes;
 
 	memset(buffer, 0, sizeof(buffer));
 
-	while ((read_bytes = FAT_Read(&g_disk, fd, sizeof(buffer), buffer))) {
+	while ((read_bytes = FAT_Read(fd, sizeof(buffer), buffer))) {
 		for (uint32_t i = 0; i < read_bytes; i++) {
 			if (buffer[i] == '\n') {
 				putchar('\r');
@@ -139,7 +137,7 @@ bool exec(char** args) {
 		return false;
 	}
 
-	execute_program(g_disk, args[1]);
+	execute_program(args[1]);
 
 	return true;
 }
@@ -209,8 +207,7 @@ bool command_handle(char* command) {
 	return false;
 }
 
-void shell_main(DISK disk) {
-	g_disk = disk;
+void shell_main() {
 	char* command;
 
 	tty_clear();

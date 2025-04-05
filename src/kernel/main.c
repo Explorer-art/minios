@@ -30,7 +30,7 @@ void _cdecl kmain() {
 		goto end;
 	}
 
-	execute_program(disk, "program.bin");
+	execute_program("program.bin");
 
 	// Передача управления терминалу
 	// shell_main(disk);

@@ -5,17 +5,21 @@
 
 Syscalls syscalls = {
 	(putchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x00),
-	(getchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x04),
-	(gets_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x08),
-	(malloc_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x0C),
-	(free_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x10),
-	(fat_open_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x14),
-	(fat_read_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x18),
-	(fat_close_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x1C)
+	(tty_puts_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x04),
+	(kprintf_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x08),
+	(getchar_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x0C),
+	(gets_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x10),
+	(malloc_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x14),
+	(free_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x18),
+	(fat_open_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x1C),
+	(fat_read_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x20),
+	(fat_close_syscall_ptr far*)(SYSCALL_VECTOR_BASE + 0x24)
 };
 
 bool Syscall_Init() {
 	*syscalls.putchar = (putchar_syscall_ptr)&putchar;
+	*syscalls.puts = (tty_puts_syscall_ptr)&tty_puts;
+	*syscalls.printf = (kprintf_syscall_ptr)&kprintf;
 	*syscalls.getchar = (getchar_syscall_ptr)&getchar;
 	*syscalls.gets = (gets_syscall_ptr)&tty_gets;
 	*syscalls.malloc = (malloc_syscall_ptr)&mem_alloc;

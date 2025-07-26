@@ -20,6 +20,7 @@ kernel: $(BUILD_DIR)/kernel.bin
 
 $(BUILD_DIR)/kernel.bin: $(OBJECTS_ASM) $(OBJECTS_C)
 	$(LD16) NAME $(BUILD_DIR)/kernel.bin FILE \{ $(OBJECTS_ASM) $(OBJECTS_C) \} OPTION MAP=$(BUILD_DIR)/kernel.map @linker.ld
+	rm *.err
 
 $(BUILD_DIR)/kernel/c/%.obj: %.c always
 	$(CC16) $(CFLAGS16) -fo=$@ $<

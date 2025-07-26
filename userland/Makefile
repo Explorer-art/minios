@@ -28,11 +28,11 @@ $(BUILD_DIR)/asm/%.obj: %.asm always
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 assembly: clean
-	$(ASM) -f bin assembly/program.asm -o $(BUILD_DIR)/program.bin
+	$(ASM) -f bin asm/program.asm -o $(BUILD_DIR)/program.bin
 
 always:
 	mkdir -p $(BUILD_DIR)/c/libc
-	mkdir -p $(BUILD_DIR)/assembly
+	mkdir -p $(BUILD_DIR)/asm
 
 clean:
 	rm -f $(BUILD_DIR)/program.bin

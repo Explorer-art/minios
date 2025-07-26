@@ -143,7 +143,7 @@ bool exec(char** args) {
 }
 
 bool info() {
-	kprintf("System: Minios\nVersion: %s\nAuthor: Truzme_\n\n", VERSION);
+	kprintf("System: Minios\nVersion: %s\nAuthor: Explorer-art (Truzme_)\n\n", VERSION);
 	return true;
 }
 

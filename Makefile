@@ -1,6 +1,5 @@
 ASM=nasm
 
-SRC_DIR=src
 BUILD_DIR=build
 FLOPPY_IMAGE=minios.img
 
@@ -10,13 +9,13 @@ all: clean $(FLOPPY_IMAGE)
 
 $(FLOPPY_IMAGE): $(BUILD_DIR)/$(FLOPPY_IMAGE)
 
-$(BUILD_DIR)/$(FLOPPY_IMAGE): bootloader
+$(BUILD_DIR)/$(FLOPPY_IMAGE): bootloader kernel program
 	dd if=/dev/zero of=$(BUILD_DIR)/$(FLOPPY_IMAGE) bs=512 count=2880
 	mkfs.fat -F 12 -n "NBOS" $(BUILD_DIR)/$(FLOPPY_IMAGE)
 	dd if=$(BUILD_DIR)/boot.bin of=$(BUILD_DIR)/$(FLOPPY_IMAGE) conv=notrunc
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) $(BUILD_DIR)/kernel.bin "::kernel.bin"
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) file.txt "::file.txt"
-	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) program.bin "::program.bin"
+	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) $(BUILD_DIR)/program.bin "::program.bin"
 	mmd -i $(BUILD_DIR)/$(FLOPPY_IMAGE) "::dir"
 	mcopy -i $(BUILD_DIR)/$(FLOPPY_IMAGE) file.txt "::dir/file.txt"
 
@@ -24,17 +23,10 @@ $(BUILD_DIR)/$(FLOPPY_IMAGE): bootloader
 # Bootloader
 #
 
-bootloader: stage1 stage2
+bootloader: $(BUILD_DIR)/boot.bin
 
-stage1: $(BUILD_DIR)/stage1.bin
-
-$(BUILD_DIR)/stage1.bin: always
-	$(MAKE) -C $(SRC_DIR)/bootloader BUILD_DIR=$(abspath $(BUILD_DIR))
-
-stage2: $(BUILD_DIR)/kernel.bin
-
-$(BUILD_DIR)/stage2.bin: $(BUILD_DIR)/stage2.bin
-	$(MAKE) -C $(SRC_DIR)/kernel BUILD_DIR=$(abspath $(BUILD_DIR))
+$(BUILD_DIR)/boot.bin: always
+	$(MAKE) -C bootloader BUILD_DIR=$(abspath $(BUILD_DIR))
 
 #
 # Kernel
@@ -42,8 +34,17 @@ $(BUILD_DIR)/stage2.bin: $(BUILD_DIR)/stage2.bin
 
 kernel: $(BUILD_DIR)/kernel.bin
 
-$(BUILD_DIR)/kernel.bin: always
-	$(MAKE) -C $(SRC_DIR)/kernel BUILD_DIR=$(abspath $(BUILD_DIR))
+$(BUILD_DIR)/kernel.bin:
+	$(MAKE) -C kernel BUILD_DIR=$(abspath $(BUILD_DIR))
+
+#
+# Userland
+#
+
+program: $(BUILD_DIR)/program.bin
+
+$(BUILD_DIR)/program.bin:
+	$(MAKE) -C userland-assembly BUILD_DIR=$(abspath $(BUILD_DIR))
 
 #
 # Protected Mode Bootloader
@@ -59,6 +60,6 @@ always:
 	mkdir -p $(BUILD_DIR)
 
 clean:
-	$(MAKE) -C $(SRC_DIR)/bootloader BUILD_DIR=$(abspath $(BUILD_DIR)) clean
-	$(MAKE) -C $(SRC_DIR)/kernel BUILD_DIR=$(abspath $(BUILD_DIR)) clean
+	$(MAKE) -C bootloader BUILD_DIR=$(abspath $(BUILD_DIR)) clean
+	$(MAKE) -C kernel BUILD_DIR=$(abspath $(BUILD_DIR)) clean
 	rm -rf $(BUILD_DIR)/*
